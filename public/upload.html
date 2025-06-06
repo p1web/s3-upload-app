@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload File to S3</title>
+</head>
+<body>
+  <h1>Upload a File to S3</h1>
+  <form id="uploadForm">
+    <input type="file" name="file" id="fileInput" required />
+    <button type="submit">Upload</button>
+  </form>
+
+  <div id="result" style="margin-top: 20px;"></div>
+
+  <script>
+    const uploadForm = document.getElementById('uploadForm');
+    const fileInput = document.getElementById('fileInput');
+    const resultDiv = document.getElementById('result');
+
+    uploadForm.addEventListener('submit', async (e) => {
+      e.preventDefault(); // Prevent default form refresh
+
+      const file = fileInput.files[0];
+      if (!file) {
+        resultDiv.innerText = 'Please select a file.';
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const res = await fetch('/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        const text = await res.text();
+        resultDiv.innerHTML = text;
+      } catch (err) {
+        console.error(err);
+        resultDiv.innerText = 'Upload failed';
+      }
+    });
+  </script>
+</body>
+</html>
